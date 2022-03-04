@@ -33,7 +33,7 @@ class MyApp extends StatelessWidget {
       child: MaterialApp(
         title: 'SalonOclock',
         theme: ThemeData(primarySwatch: Colors.grey, accentColor: Colors.black),
-        home: auth_screen(),
+        home: SalonOverviewScreen(),
         routes: {
           SalonDetailScreen.routeName: (ctx) => SalonDetailScreen(),
           TapScreen.routeName: (ctx) => TapScreen(),

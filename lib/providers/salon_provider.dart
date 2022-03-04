@@ -132,7 +132,15 @@ class SalonProvider with ChangeNotifier {
   //   notifyListeners();
   // }
 
-  void addSalon() {
+  void addSalon(Salon salon) {
+    final newSalon = Salon(
+        title: salon.title,
+        description: salon.description,
+        locationDesc: salon.locationDesc,
+        phoneNo: salon.phoneNo,
+        imageLogo: salon.imageLogo,
+        id: DateTime.now().toString());
+    _items.add(newSalon);
     notifyListeners();
     //This for adding a salon in the future.
   }
