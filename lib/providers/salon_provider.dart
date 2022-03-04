@@ -148,4 +148,14 @@ class SalonProvider with ChangeNotifier {
   Salon findById(String id) {
     return _items.firstWhere((slon) => slon.id == id);
   }
+
+  void updateSalon(String id, Salon updatedSalon) {
+    final salonIndex = _items.indexWhere((salon) => salon.id == id);
+    if (salonIndex >= 0) {
+      _items[salonIndex] = updatedSalon;
+      notifyListeners();
+    } else {
+      print("ERROR");
+    }
+  }
 }

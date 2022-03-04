@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:salon_clock/providers/Salon.dart';
+import 'package:salon_clock/providers/barbers.dart';
 import 'package:salon_clock/providers/product.dart';
 import 'package:salon_clock/providers/salon_provider.dart';
 
@@ -26,6 +27,14 @@ class _EditSalonScreenState extends State<EditSalonScreen> {
     imageLogo: '',
     locationDesc: '',
   );
+  var _initValues = {
+    'title': '',
+    'description': '',
+    'phoneNo': '',
+    'imageLogo': '',
+    'locationDesc': '',
+  };
+  var _isInit = true;
   @override
   void dispose() {
     // TODO: we need to dispose the nodes otherwise will stick around in memory and will lead to a memory leak.
@@ -36,6 +45,29 @@ class _EditSalonScreenState extends State<EditSalonScreen> {
     _imageUrlFocusNode.dispose();
     _locationDescriptionFocusNode.dispose();
     super.dispose();
+  }
+
+  @override
+  void didChangeDependencies() {
+    // TODO: implement didChangeDependencies
+    if (_isInit) {
+      final salonId = ModalRoute.of(context).settings.arguments as String;
+      if (salonId != null) {
+        _editedSalon = Provider.of<SalonProvider>(context, listen: false)
+            .findById(salonId);
+        _initValues = {
+          'title': _editedSalon.title,
+          'description': _editedSalon.description,
+          'phoneNo': _editedSalon.phoneNo,
+          'imageLogo': '',
+          // 'imageLogo': _editedSalon.imageLogo,
+          'locationDesc': _editedSalon.locationDesc,
+        };
+        _imageUrlController.text = _editedSalon.imageLogo;
+      }
+    }
+    _isInit = false;
+    super.didChangeDependencies();
   }
 
   @override
@@ -65,6 +97,7 @@ class _EditSalonScreenState extends State<EditSalonScreen> {
           child: ListView(
             children: [
               TextFormField(
+                initialValue: _initValues['title'],
                 decoration: const InputDecoration(labelText: 'Title'),
                 textInputAction: TextInputAction.next,
                 validator: (value) {
@@ -78,16 +111,18 @@ class _EditSalonScreenState extends State<EditSalonScreen> {
                 },
                 onSaved: (newValue) {
                   _editedSalon = Salon(
-                    id: null,
+                    id: _editedSalon.id,
                     title: newValue,
                     description: _editedSalon.description,
                     phoneNo: _editedSalon.phoneNo,
                     imageLogo: _editedSalon.imageLogo,
                     locationDesc: _editedSalon.locationDesc,
+                    isFavorite: _editedSalon.isFavorite,
                   );
                 },
               ),
               TextFormField(
+                initialValue: _initValues['phoneNo'],
                 decoration: const InputDecoration(labelText: 'Phone Number'),
                 textInputAction: TextInputAction.next,
                 focusNode: _phoneFocusNode,
@@ -107,16 +142,18 @@ class _EditSalonScreenState extends State<EditSalonScreen> {
                 },
                 onSaved: (newValue) {
                   _editedSalon = Salon(
-                    id: null,
+                    id: _editedSalon.id,
                     title: _editedSalon.title,
                     description: _editedSalon.description,
                     phoneNo: newValue,
                     imageLogo: _editedSalon.imageLogo,
                     locationDesc: _editedSalon.locationDesc,
+                    isFavorite: _editedSalon.isFavorite,
                   );
                 },
               ),
               TextFormField(
+                initialValue: _initValues['locationDesc'],
                 decoration:
                     const InputDecoration(labelText: 'Location Description'),
                 textInputAction: TextInputAction.next,
@@ -133,16 +170,18 @@ class _EditSalonScreenState extends State<EditSalonScreen> {
                 },
                 onSaved: (newValue) {
                   _editedSalon = Salon(
-                    id: null,
+                    id: _editedSalon.id,
                     title: _editedSalon.title,
                     description: _editedSalon.description,
                     phoneNo: _editedSalon.phoneNo,
                     imageLogo: _editedSalon.imageLogo,
                     locationDesc: newValue,
+                    isFavorite: _editedSalon.isFavorite,
                   );
                 },
               ),
               TextFormField(
+                initialValue: _initValues['description'],
                 decoration: const InputDecoration(labelText: 'Description'),
                 maxLines: 3,
                 keyboardType: TextInputType.multiline,
@@ -158,12 +197,13 @@ class _EditSalonScreenState extends State<EditSalonScreen> {
                 },
                 onSaved: (newValue) {
                   _editedSalon = Salon(
-                    id: null,
+                    id: _editedSalon.id,
                     title: _editedSalon.title,
                     description: newValue,
                     phoneNo: _editedSalon.phoneNo,
                     imageLogo: _editedSalon.imageLogo,
                     locationDesc: _editedSalon.locationDesc,
+                    isFavorite: _editedSalon.isFavorite,
                   );
                 },
               ),
@@ -211,12 +251,23 @@ class _EditSalonScreenState extends State<EditSalonScreen> {
                       },
                       onSaved: (newValue) {
                         _editedSalon = Salon(
-                          id: null,
+                          id: _editedSalon.id,
                           title: _editedSalon.title,
                           description: _editedSalon.description,
                           phoneNo: _editedSalon.phoneNo,
                           imageLogo: newValue,
                           locationDesc: _editedSalon.locationDesc,
+                          isFavorite: _editedSalon.isFavorite,
+                          // barbers: [
+                          //   Barbers(
+                          //       barberID: _editedSalon.barbers[8].barberID,
+                          //       name: _editedSalon.barbers[8].name,
+                          //       career: _editedSalon.barbers[8].career,
+                          //       imageURL: _editedSalon.barbers[8].imageURL,
+                          //       nationality:
+                          //           _editedSalon.barbers[8].nationality)
+                          // ]
+                          //
                         );
                       },
                     ),
@@ -250,7 +301,12 @@ class _EditSalonScreenState extends State<EditSalonScreen> {
       return;
     }
     _form.currentState.save();
-    Provider.of<SalonProvider>(context, listen: false).addSalon(_editedSalon);
+    if (_editedSalon.id != null) {
+      Provider.of<SalonProvider>(context, listen: false)
+          .updateSalon(_editedSalon.id, _editedSalon);
+    } else {
+      Provider.of<SalonProvider>(context, listen: false).addSalon(_editedSalon);
+    }
     Navigator.of(context).pop();
   }
 }

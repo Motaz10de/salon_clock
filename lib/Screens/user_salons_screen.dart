@@ -29,8 +29,10 @@ class UserSalonScreen extends StatelessWidget {
           itemCount: salonsData.items.length,
           itemBuilder: (_, index) => Column(
             children: [
-              UserSalonItem(salonsData.items[index].title,
-                  salonsData.items[index].imageLogo),
+              UserSalonItem(
+                  salonsData.items[index].title,
+                  salonsData.items[index].imageLogo,
+                  salonsData.items[index].id),
               const Divider(),
             ],
           ),
