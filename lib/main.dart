@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:salon_clock/Screens/auth_screen.dart';
+import 'package:salon_clock/Screens/authentication_screen.dart';
 import 'package:salon_clock/Screens/cart_screen.dart';
 import 'package:salon_clock/Screens/edit_salons.dart';
 import 'package:salon_clock/Screens/orders_screen.dart';
