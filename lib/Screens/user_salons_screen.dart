@@ -23,21 +23,29 @@ class UserSalonScreen extends StatelessWidget {
         ],
       ),
       drawer: AppDrawer(),
-      body: Padding(
-        padding: EdgeInsets.all(8),
-        child: ListView.builder(
-          itemCount: salonsData.items.length,
-          itemBuilder: (_, index) => Column(
-            children: [
-              UserSalonItem(
-                  salonsData.items[index].title,
-                  salonsData.items[index].imageLogo,
-                  salonsData.items[index].id),
-              const Divider(),
-            ],
+      body: RefreshIndicator(
+        onRefresh: () => _refreshSalons(context),
+        child: Padding(
+          padding: EdgeInsets.all(8),
+          child: ListView.builder(
+            itemCount: salonsData.items.length,
+            itemBuilder: (_, index) => Column(
+              children: [
+                UserSalonItem(
+                    salonsData.items[index].title,
+                    salonsData.items[index].imageLogo,
+                    salonsData.items[index].id),
+                const Divider(),
+              ],
+            ),
           ),
         ),
       ),
     );
+  }
+
+  Future<void> _refreshSalons(BuildContext context) async {
+    await Provider.of<SalonProvider>(context, listen: false)
+        .fetchAndSetSalons();
   }
 }

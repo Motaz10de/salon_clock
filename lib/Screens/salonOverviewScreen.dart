@@ -5,6 +5,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:salon_clock/providers/cart.dart';
+import 'package:salon_clock/providers/salon_provider.dart';
 import 'package:salon_clock/widgets/app_drawrer.dart';
 import 'package:salon_clock/widgets/badge.dart';
 
@@ -24,6 +25,26 @@ class SalonOverviewScreen extends StatefulWidget {
 
 class _SalonOverviewScreenState extends State<SalonOverviewScreen> {
   var _showOnlyFavorites = false;
+  var _isInit = true;
+
+  @override
+  void initState() {
+    //Provider.of<SalonProvider>(context).fetchAndSetSalons(); // WONT WORK
+    // Future.delayed(Duration.zero).then((_) {
+    //   Provider.of<SalonProvider>(context).fetchAndSetSalons();
+    // });
+    super.initState();
+  }
+
+  @override
+  void didChangeDependencies() {
+    if (_isInit) {
+      Provider.of<SalonProvider>(context).fetchAndSetSalons();
+    }
+    _isInit = false;
+    super.didChangeDependencies();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
