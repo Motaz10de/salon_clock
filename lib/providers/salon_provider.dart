@@ -225,13 +225,40 @@ class SalonProvider with ChangeNotifier {
     return _items.firstWhere((slon) => slon.id == id);
   }
 
-  void updateSalon(String id, Salon updatedSalon) {
+  Future<void> updateSalon(String id, Salon updatedSalon) async {
     final salonIndex = _items.indexWhere((salon) => salon.id == id);
     if (salonIndex >= 0) {
+      final url = Uri.parse(
+          'https://test11-eb4c6-default-rtdb.firebaseio.com/salons/$id.json');
+      await http.patch(url,
+          body: json.encode({
+            'title': updatedSalon.title,
+            'description': updatedSalon.description,
+            'locationDesc': updatedSalon.locationDesc,
+            'phoneNo': updatedSalon.phoneNo,
+            'imageLogo': updatedSalon.imageLogo,
+          }));
       _items[salonIndex] = updatedSalon;
       notifyListeners();
     } else {
       print("ERROR");
     }
+  }
+
+  void deleteSalon(String id) async {
+    final url = Uri.parse(
+        'https://test11-eb4c6-default-rtdb.firebaseio.com/salons/$id.json');
+    final existingSalonIndex = _items.indexWhere((salon) => salon.id == id);
+    var existingSalon = _items[existingSalonIndex];
+    http.delete(url).then((response) {
+      if (response.statusCode >= 400) {}
+      existingSalon = null;
+    }).catchError((_) {
+      _items.insert(existingSalonIndex, existingSalon);
+      notifyListeners();
+    });
+    _items.removeAt(
+        existingSalonIndex); // if deleting failed, salon is added again
+    notifyListeners();
   }
 }

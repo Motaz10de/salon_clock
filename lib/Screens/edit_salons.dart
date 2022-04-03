@@ -334,12 +334,8 @@ class _EditSalonScreenState extends State<EditSalonScreen> {
       _isLoading = true;
     });
     if (_editedSalon.id != null) {
-      Provider.of<SalonProvider>(context, listen: false)
+      await Provider.of<SalonProvider>(context, listen: false)
           .updateSalon(_editedSalon.id, _editedSalon);
-      setState(() {
-        _isLoading = false;
-      });
-      Navigator.of(context).pop();
     } else {
       try {
         await Provider.of<SalonProvider>(context, listen: false)
@@ -366,5 +362,9 @@ class _EditSalonScreenState extends State<EditSalonScreen> {
         Navigator.of(context).pop();
       }
     }
+    setState(() {
+      _isLoading = false;
+    });
+    Navigator.of(context).pop();
   }
 }

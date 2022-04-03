@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:salon_clock/Screens/edit_salons.dart';
+import 'package:salon_clock/providers/salon_provider.dart';
 
 class UserSalonItem extends StatelessWidget {
   final String id;
@@ -30,7 +32,10 @@ class UserSalonItem extends StatelessWidget {
             ),
             IconButton(
               icon: Icon(Icons.delete),
-              onPressed: () {},
+              onPressed: () {
+                Provider.of<SalonProvider>(context, listen: false)
+                    .deleteSalon(id);
+              },
               color: Theme.of(context).errorColor,
             ),
           ],
