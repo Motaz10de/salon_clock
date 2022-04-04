@@ -11,6 +11,7 @@ class UserSalonItem extends StatelessWidget {
   UserSalonItem(this.title, this.imageUrl, this.id);
   @override
   Widget build(BuildContext context) {
+    final scaffold = Scaffold.of(context);
     return ListTile(
       title: Text(title),
       leading: CircleAvatar(
@@ -32,9 +33,17 @@ class UserSalonItem extends StatelessWidget {
             ),
             IconButton(
               icon: Icon(Icons.delete),
-              onPressed: () {
-                Provider.of<SalonProvider>(context, listen: false)
-                    .deleteSalon(id);
+              onPressed: () async {
+                try {
+                  await Provider.of<SalonProvider>(context, listen: false)
+                      .deleteSalon(id);
+                } catch (error) {
+                  scaffold.showSnackBar(SnackBar(
+                      content: Text(
+                    "Deleting Failed!",
+                    textAlign: TextAlign.center,
+                  )));
+                }
               },
               color: Theme.of(context).errorColor,
             ),

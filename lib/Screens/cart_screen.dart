@@ -116,19 +116,10 @@ class _CartScreenState extends State<CartScreen> {
                     ),
                     backgroundColor: Theme.of(context).primaryColor,
                   ),
-                  FlatButton(
-                      onPressed: () {
-                        Provider.of<Orders>(context, listen: false).addOrder(
-                            cart.items.values.toList(),
-                            cart.barbers.values.toList(),
-                            cart.totalAmount,
-                            _selectDate,
-                            _timeOfDay);
-                        cart.clearCart();
-                        Navigator.of(context)
-                            .pushReplacementNamed(OrdersScreen.routeName);
-                      },
-                      child: const Text("Order Now"))
+                  orderButton(
+                      cart: cart,
+                      selectDate: _selectDate,
+                      timeOfDay: _timeOfDay)
                 ],
               ),
             ),
@@ -200,5 +191,53 @@ class _CartScreenState extends State<CartScreen> {
         ),
       ),
     );
+  }
+}
+
+class orderButton extends StatefulWidget {
+  const orderButton({
+    Key key,
+    @required this.cart,
+    @required DateTime selectDate,
+    @required TimeOfDay timeOfDay,
+  })  : _selectDate = selectDate,
+        _timeOfDay = timeOfDay,
+        super(key: key);
+
+  final Cart cart;
+  final DateTime _selectDate;
+  final TimeOfDay _timeOfDay;
+
+  @override
+  State<orderButton> createState() => _orderButtonState();
+}
+
+class _orderButtonState extends State<orderButton> {
+  var _isloading = false;
+  @override
+  Widget build(BuildContext context) {
+    return FlatButton(
+        onPressed: (widget.cart.totalAmount <= 0 || _isloading)
+            ? null
+            : () async {
+                setState(() {
+                  _isloading = true;
+                });
+                await Provider.of<Orders>(context, listen: false).addOrder(
+                    widget.cart.items.values.toList(),
+                    widget.cart.barbers.values.toList(),
+                    widget.cart.totalAmount,
+                    widget._selectDate,
+                    widget._timeOfDay);
+                setState(() {
+                  _isloading = false;
+                });
+                widget.cart.clearCart();
+                Navigator.of(context)
+                    .pushReplacementNamed(OrdersScreen.routeName);
+              },
+        child: _isloading
+            ? const CircularProgressIndicator()
+            : const Text("Order Now"));
   }
 }

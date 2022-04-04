@@ -1,8 +1,11 @@
 // ignore_for_file: file_names
+import 'dart:convert';
+
 import 'package:flutter/foundation.dart';
 import 'package:salon_clock/providers/barbers.dart';
 import 'package:salon_clock/providers/product.dart';
 import 'package:salon_clock/providers/services.dart';
+import 'package:http/http.dart' as http;
 
 class Salon with ChangeNotifier {
   final String id;
@@ -31,8 +34,22 @@ class Salon with ChangeNotifier {
       this.isFavorite = false,
       this.gender = false});
 
-  void toggleFavoriteStatus() {
+  void toggleFavoriteStatus() async {
+    final oldStatus = isFavorite;
     isFavorite = !isFavorite;
     notifyListeners();
+    final url = Uri.parse(
+        'https://test11-eb4c6-default-rtdb.firebaseio.com/salons/$id.json');
+    try {
+      final response = await http.patch(url,
+          body: json.encode(({'isFavorite': isFavorite})));
+      if (response.statusCode >= 400) {
+        isFavorite = oldStatus;
+        notifyListeners();
+      }
+    } catch (error) {
+      isFavorite = oldStatus;
+      notifyListeners();
+    }
   }
 }

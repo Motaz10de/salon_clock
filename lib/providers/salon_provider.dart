@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:salon_clock/models/http_exception.dart';
 import 'package:salon_clock/providers/Salon.dart';
 import 'package:salon_clock/providers/barbers.dart';
 import 'package:salon_clock/providers/product.dart';
@@ -163,6 +164,14 @@ class SalonProvider with ChangeNotifier {
                   description: salonData['products'][2]['description'],
                   price: salonData['products'][2]['price'],
                   imageUrl: salonData['products'][2]['imageUrl']),
+            ],
+            barbers: [
+              Barbers(
+                  barberID: salonData['barbers'][1]['barberID'],
+                  name: salonData['barbers'][1]['barberName'],
+                  career: salonData['barbers'][1]['career'],
+                  imageURL: salonData['barbers'][1]['imageUrl'],
+                  nationality: salonData['barbers'][1]['nationality'])
             ]));
       });
       _items = loadedSalon;
@@ -245,20 +254,21 @@ class SalonProvider with ChangeNotifier {
     }
   }
 
-  void deleteSalon(String id) async {
+  Future<void> deleteSalon(String id) async {
     final url = Uri.parse(
         'https://test11-eb4c6-default-rtdb.firebaseio.com/salons/$id.json');
     final existingSalonIndex = _items.indexWhere((salon) => salon.id == id);
     var existingSalon = _items[existingSalonIndex];
-    http.delete(url).then((response) {
-      if (response.statusCode >= 400) {}
-      existingSalon = null;
-    }).catchError((_) {
-      _items.insert(existingSalonIndex, existingSalon);
-      notifyListeners();
-    });
     _items.removeAt(
         existingSalonIndex); // if deleting failed, salon is added again
     notifyListeners();
+    final response = await http.delete(url);
+
+    if (response.statusCode >= 400) {
+      _items.insert(existingSalonIndex, existingSalon);
+      notifyListeners();
+      throw HttpException("Could Not Delete Product.");
+    }
+    existingSalon = null;
   }
 }

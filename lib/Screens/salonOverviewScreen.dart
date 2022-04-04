@@ -25,23 +25,31 @@ class SalonOverviewScreen extends StatefulWidget {
 
 class _SalonOverviewScreenState extends State<SalonOverviewScreen> {
   var _showOnlyFavorites = false;
-  var _isInit = true;
-
+  var _isInitiated = true;
+  var _isLoading = false;
+  @override
   @override
   void initState() {
-    //Provider.of<SalonProvider>(context).fetchAndSetSalons(); // WONT WORK
-    // Future.delayed(Duration.zero).then((_) {
-    //   Provider.of<SalonProvider>(context).fetchAndSetSalons();
-    // });
+    // Provider.of<Products>(context).fetchAndSetProducts(); THIS WONT WORK!
     super.initState();
   }
 
   @override
   void didChangeDependencies() {
-    if (_isInit) {
-      Provider.of<SalonProvider>(context).fetchAndSetSalons();
+    // TODO: didChangeDependencies  this will now run after the widget has been fully initialized so to say but before build ran for the first time.
+    // It will, however, unlike initState, run more often multiple times and not just when this gets created.
+    if (_isInitiated) {
+      setState(() {
+        _isLoading = true;
+      });
+
+      Provider.of<SalonProvider>(context).fetchAndSetSalons().then((_) {
+        setState(() {
+          _isLoading = false;
+        });
+      });
     }
-    _isInit = false;
+    _isInitiated = false;
     super.didChangeDependencies();
   }
 
@@ -88,7 +96,11 @@ class _SalonOverviewScreenState extends State<SalonOverviewScreen> {
         ],
       ),
       drawer: AppDrawer(),
-      body: SalonGrid(_showOnlyFavorites),
+      body: _isLoading
+          ? const Center(
+              child: CircularProgressIndicator(),
+            )
+          : SalonGrid(_showOnlyFavorites),
     );
   }
 }
