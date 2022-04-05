@@ -344,12 +344,12 @@ class _EditSalonScreenState extends State<EditSalonScreen> {
         await showDialog<Null>(
           context: context,
           builder: (context) => AlertDialog(
-            title: Text("An error occured!"),
-            content: Text("Something went wrong!"),
+            title: const Text("An error occured!"),
+            content: const Text("Something went wrong!"),
             actions: [
               FlatButton(
                   onPressed: () {
-                    Navigator.of(context).pop();
+                    Navigator.of(context).maybePop();
                   },
                   child: Text("Got It"))
             ],
@@ -359,7 +359,7 @@ class _EditSalonScreenState extends State<EditSalonScreen> {
         setState(() {
           _isLoading = false;
         });
-        Navigator.of(context).pop();
+        Navigator.of(context).maybePop();
       }
     }
     setState(() {

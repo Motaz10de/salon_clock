@@ -38,7 +38,7 @@ class UserSalonItem extends StatelessWidget {
                   await Provider.of<SalonProvider>(context, listen: false)
                       .deleteSalon(id);
                 } catch (error) {
-                  scaffold.showSnackBar(SnackBar(
+                  scaffold.showSnackBar(const SnackBar(
                       content: Text(
                     "Deleting Failed!",
                     textAlign: TextAlign.center,

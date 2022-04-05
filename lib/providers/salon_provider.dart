@@ -141,6 +141,9 @@ class SalonProvider with ChangeNotifier {
     try {
       final response = await http.get(url);
       final extractedData = json.decode(response.body) as Map<String, dynamic>;
+      if (extractedData == null) {
+        return;
+      }
       final List<Salon> loadedSalon = [];
       extractedData.forEach((salonId, salonData) {
         loadedSalon.add(Salon(

@@ -17,7 +17,8 @@ class CartScreen extends StatefulWidget {
 
 class _CartScreenState extends State<CartScreen> {
   DateTime _selectDate;
-  TimeOfDay _timeOfDay = TimeOfDay.now();
+  var _timeOfDay = TimeOfDay.now();
+  var timeToString;
   @override
   void initState() {
     // TODO: implement initState
@@ -51,6 +52,7 @@ class _CartScreenState extends State<CartScreen> {
       }
       setState(() {
         _timeOfDay = pickedTime;
+        timeToString = pickedTime.toString();
       });
     });
   }
@@ -228,7 +230,8 @@ class _orderButtonState extends State<orderButton> {
                     widget.cart.barbers.values.toList(),
                     widget.cart.totalAmount,
                     widget._selectDate,
-                    widget._timeOfDay);
+                    widget._timeOfDay.toString(),
+                    context);
                 setState(() {
                   _isloading = false;
                 });

@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:salon_clock/providers/cart.dart';
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 
 class OrderItem {
   final String id;
@@ -12,7 +13,7 @@ class OrderItem {
   final List<CartItem> barbers;
   final DateTime dateTime;
   final DateTime bookingTime;
-  final TimeOfDay orderTime;
+  final String orderTime;
 
   OrderItem(
       {this.id,
@@ -30,8 +31,46 @@ class Orders with ChangeNotifier {
     return [..._orders];
   }
 
-  void addOrder(List<CartItem> cartProducts, List<CartItem> barbers,
-      double total, DateTime bookingTime, TimeOfDay orderTime) async {
+  Future<void> fetchAndSetOrders() async {
+    const url = 'https://test11-eb4c6-default-rtdb.firebaseio.com/orders.json';
+    final response = await http.get(url);
+    final List<OrderItem> loadedOrders = [];
+    final extractedData = json.decode(response.body) as Map<String, dynamic>;
+    if (extractedData == null) {
+      return;
+    }
+    extractedData.forEach((orderId, orderData) {
+      loadedOrders.add(
+        OrderItem(
+          id: orderId,
+          amount: orderData['amount'],
+          dateTime: DateTime.parse(orderData['dateTime']),
+          bookingTime: DateTime.parse(orderData['bookingTime']),
+          orderTime: orderData['orderTime'],
+          products: (orderData['products'] as List<dynamic>)
+              .map((item) => CartItem(
+                  cartID: item['id'],
+                  price: item['price'],
+                  quant: item['quantity'],
+                  title: item['title']))
+              .toList(),
+          barbers: (orderData['barbers'] as List<dynamic>)
+              .map((item) => CartItem(title: item['barberName']))
+              .toList(),
+        ),
+      );
+    });
+    _orders = loadedOrders.reversed.toList();
+    notifyListeners();
+  }
+
+  Future<void> addOrder(
+      List<CartItem> cartProducts,
+      List<CartItem> barbers,
+      double total,
+      DateTime bookingTime,
+      String orderTime,
+      BuildContext context) async {
     const url = 'https://test11-eb4c6-default-rtdb.firebaseio.com/orders.json';
     final timeStamp = DateTime.now();
     final response = await http.post(url,
@@ -39,7 +78,7 @@ class Orders with ChangeNotifier {
           'amount': total,
           'dateTime': timeStamp.toIso8601String(),
           'bookingTime': bookingTime.toIso8601String(),
-          'orderTime': orderTime.toString(),
+          'orderTime': orderTime,
           'products': cartProducts
               .map(
                 (cp) => {

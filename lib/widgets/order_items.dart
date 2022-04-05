@@ -34,7 +34,7 @@ class _OrderItemState extends State<OrderItem> {
                 Text("Booking Date: " +
                     DateFormat('dd/MM/yyyy').format(widget.order.bookingTime)),
                 Text("Booking Time: " +
-                    widget.order.orderTime.format(context).toString()),
+                    (widget.order.orderTime.toString()).toString()),
               ],
             ),
             trailing: IconButton(
