@@ -3,12 +3,14 @@ import 'package:provider/provider.dart';
 import 'package:salon_clock/Screens/salon_detail_screen.dart';
 import 'package:salon_clock/Screens/tap_screen.dart';
 import 'package:salon_clock/providers/Salon.dart';
+import 'package:salon_clock/providers/auth.dart';
 import 'package:salon_clock/providers/cart.dart';
 
 class SalonElement extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final salon = Provider.of<Salon>(context);
+    final authData = Provider.of<Auth>(context, listen: false);
 
     return ClipRRect(
       borderRadius: BorderRadius.circular(3),
@@ -35,7 +37,10 @@ class SalonElement extends StatelessWidget {
           ),
           trailing: IconButton(
               onPressed: () {
-                salon.toggleFavoriteStatus();
+                salon.toggleFavoriteStatus(
+                  authData.token,
+                  authData.userId,
+                );
               },
               icon: Icon(
                   salon.isFavorite ? (Icons.favorite) : Icons.favorite_border)),

@@ -24,24 +24,32 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider.value(
           value: Auth(),
         ),
-        ChangeNotifierProvider.value(
-          value: SalonProvider(),
+        ChangeNotifierProxyProvider<Auth, SalonProvider>(
+          update: (ctx, auth, previousProducts) => SalonProvider(
+              auth.token,
+              auth.userId,
+              previousProducts == null ? [] : previousProducts.items),
         ),
         ChangeNotifierProvider.value(value: Cart()),
-        ChangeNotifierProvider.value(value: Orders())
+        ChangeNotifierProxyProvider<Auth, Orders>(
+            update: (ctx, auth, previousOrders) => Orders(auth.token,
+                previousOrders == null ? [] : previousOrders.orders))
       ],
-      child: MaterialApp(
-        title: 'SalonOclock',
-        theme: ThemeData(primarySwatch: Colors.grey, accentColor: Colors.black),
-        home: SalonOverviewScreen(),
-        routes: {
-          SalonDetailScreen.routeName: (ctx) => SalonDetailScreen(),
-          TapScreen.routeName: (ctx) => TapScreen(),
-          CartScreen.routeName: (ctx) => CartScreen(),
-          OrdersScreen.routeName: (ctx) => OrdersScreen(),
-          UserSalonScreen.routeName: (ctx) => UserSalonScreen(),
-          EditSalonScreen.routeName: (ctx) => EditSalonScreen(),
-        },
+      child: Consumer<Auth>(
+        builder: (ctx, auth, _) => MaterialApp(
+          title: 'SalonOclock',
+          theme:
+              ThemeData(primarySwatch: Colors.grey, accentColor: Colors.black),
+          home: auth.isAuth ? SalonOverviewScreen() : auth_screen(),
+          routes: {
+            SalonDetailScreen.routeName: (ctx) => SalonDetailScreen(),
+            TapScreen.routeName: (ctx) => TapScreen(),
+            CartScreen.routeName: (ctx) => CartScreen(),
+            OrdersScreen.routeName: (ctx) => OrdersScreen(),
+            UserSalonScreen.routeName: (ctx) => UserSalonScreen(),
+            EditSalonScreen.routeName: (ctx) => EditSalonScreen(),
+          },
+        ),
       ),
     );
   }

@@ -263,7 +263,7 @@ class _AuthCardState extends State<AuthCard> {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: Text("AN error accord"),
+        title: Text("An error accord"),
         content: Text(message),
         actions: [
           FlatButton(

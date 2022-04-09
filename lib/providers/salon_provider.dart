@@ -118,6 +118,11 @@ class SalonProvider with ChangeNotifier {
   ];
   var _showFavoritesOnly = false;
 
+  final String authToken;
+  final String userId;
+
+  SalonProvider(this.authToken, this.userId, this._items);
+
   List<Salon> get items {
     return [..._items];
   }
@@ -136,14 +141,18 @@ class SalonProvider with ChangeNotifier {
   //   notifyListeners();
   // }
   Future<void> fetchAndSetSalons() async {
-    final url = Uri.parse(
-        'https://test11-eb4c6-default-rtdb.firebaseio.com/salons.json');
+    var url = Uri.parse(
+        'https://test11-eb4c6-default-rtdb.firebaseio.com/salons.json?auth=$authToken');
     try {
       final response = await http.get(url);
       final extractedData = json.decode(response.body) as Map<String, dynamic>;
       if (extractedData == null) {
         return;
       }
+      url = Uri.parse(
+          'https://test11-eb4c6-default-rtdb.firebaseio.com/userFavorites/$userId.json?auth=$authToken');
+      final favoriteResponse = await http.get(url);
+      final favoriteData = json.decode(favoriteResponse.body);
       final List<Salon> loadedSalon = [];
       extractedData.forEach((salonId, salonData) {
         loadedSalon.add(Salon(
@@ -153,7 +162,8 @@ class SalonProvider with ChangeNotifier {
             phoneNo: salonData['phoneNo'],
             imageLogo: salonData['imageLogo'],
             locationDesc: salonData['locationDesc'],
-            isFavorite: salonData['isFavorite'],
+            isFavorite:
+                favoriteData == null ? false : favoriteData[salonId] ?? false,
             products: [
               ProductItem(
                   productID: salonData['products'][1]["productID"],
@@ -185,7 +195,8 @@ class SalonProvider with ChangeNotifier {
   }
 
   Future<void> addSalon(Salon salon) async {
-    const url = 'https://test11-eb4c6-default-rtdb.firebaseio.com/salons.json';
+    final url =
+        'https://test11-eb4c6-default-rtdb.firebaseio.com/salons.json?auth=$authToken';
     try {
       final response = await http.post(url,
           body: json.encode({
@@ -194,7 +205,6 @@ class SalonProvider with ChangeNotifier {
             'locationDesc': salon.locationDesc,
             'phoneNo': salon.phoneNo,
             'imageLogo': salon.imageLogo,
-            'isFavorite': salon.isFavorite,
           }));
       final newSalon = Salon(
         title: salon.title,
@@ -241,7 +251,7 @@ class SalonProvider with ChangeNotifier {
     final salonIndex = _items.indexWhere((salon) => salon.id == id);
     if (salonIndex >= 0) {
       final url = Uri.parse(
-          'https://test11-eb4c6-default-rtdb.firebaseio.com/salons/$id.json');
+          'https://test11-eb4c6-default-rtdb.firebaseio.com/salons/$id.json?auth=$authToken');
       await http.patch(url,
           body: json.encode({
             'title': updatedSalon.title,
@@ -259,7 +269,7 @@ class SalonProvider with ChangeNotifier {
 
   Future<void> deleteSalon(String id) async {
     final url = Uri.parse(
-        'https://test11-eb4c6-default-rtdb.firebaseio.com/salons/$id.json');
+        'https://test11-eb4c6-default-rtdb.firebaseio.com/salons/$id.json?auth=$authToken');
     final existingSalonIndex = _items.indexWhere((salon) => salon.id == id);
     var existingSalon = _items[existingSalonIndex];
     _items.removeAt(
