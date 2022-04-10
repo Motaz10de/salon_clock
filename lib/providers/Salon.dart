@@ -41,7 +41,7 @@ class Salon with ChangeNotifier {
     final url = Uri.parse(
         'https://test11-eb4c6-default-rtdb.firebaseio.com/userFavorites/$userId/$id.json?auth=$token');
     try {
-      final response = await http.put(url, body: json.encode(({isFavorite})));
+      final response = await http.put(url, body: json.encode(isFavorite));
       if (response.statusCode >= 400) {
         isFavorite = oldStatus;
         notifyListeners();
