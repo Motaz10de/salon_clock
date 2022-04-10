@@ -140,9 +140,11 @@ class SalonProvider with ChangeNotifier {
   //   _showFavoritesOnly = false;
   //   notifyListeners();
   // }
-  Future<void> fetchAndSetSalons() async {
+  Future<void> fetchAndSetSalons([bool filterByUser = false]) async {
+    final filterString =
+        filterByUser ? 'orderBy="creatorId"&equalTo="$userId"' : '';
     var url = Uri.parse(
-        'https://test11-eb4c6-default-rtdb.firebaseio.com/salons.json?auth=$authToken');
+        'https://test11-eb4c6-default-rtdb.firebaseio.com/salons.json?auth=$authToken&$filterString');
     try {
       final response = await http.get(url);
       final extractedData = json.decode(response.body) as Map<String, dynamic>;
@@ -205,6 +207,7 @@ class SalonProvider with ChangeNotifier {
             'locationDesc': salon.locationDesc,
             'phoneNo': salon.phoneNo,
             'imageLogo': salon.imageLogo,
+            'creatorId': userId
           }));
       final newSalon = Salon(
         title: salon.title,
