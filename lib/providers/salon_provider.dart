@@ -157,37 +157,60 @@ class SalonProvider with ChangeNotifier {
       final favoriteData = json.decode(favoriteResponse.body);
       final List<Salon> loadedSalon = [];
       extractedData.forEach((salonId, salonData) {
-        loadedSalon.add(Salon(
-            id: salonId,
-            title: salonData['title'],
-            description: salonData['description'],
-            phoneNo: salonData['phoneNo'],
-            imageLogo: salonData['imageLogo'],
-            locationDesc: salonData['locationDesc'],
-            isFavorite:
-                favoriteData == null ? false : favoriteData[salonId] ?? false,
-            products: [
-              ProductItem(
-                  productID: salonData['products'][1]["productID"],
-                  title: salonData['products'][1]['title'],
-                  description: salonData['products'][1]['description'],
-                  price: salonData['products'][1]['price'],
-                  imageUrl: salonData['products'][1]['imageUrl']),
-              ProductItem(
-                  productID: salonData['products'][2]["productID"],
-                  title: salonData['products'][2]['title'],
-                  description: salonData['products'][2]['description'],
-                  price: salonData['products'][2]['price'],
-                  imageUrl: salonData['products'][2]['imageUrl']),
-            ],
-            barbers: [
-              Barbers(
-                  barberID: salonData['barbers'][1]['barberID'],
-                  name: salonData['barbers'][1]['barberName'],
-                  career: salonData['barbers'][1]['career'],
-                  imageURL: salonData['barbers'][1]['imageUrl'],
-                  nationality: salonData['barbers'][1]['nationality'])
-            ]));
+        loadedSalon.add(
+          Salon(
+              id: salonId,
+              title: salonData['title'],
+              description: salonData['description'],
+              phoneNo: salonData['phoneNo'],
+              imageLogo: salonData['imageLogo'],
+              locationDesc: salonData['locationDesc'],
+              isFavorite:
+                  favoriteData == null ? false : favoriteData[salonId] ?? false,
+              products: [
+                ProductItem(
+                    productID: salonData['products'][1]["productID"],
+                    title: salonData['products'][1]['title'],
+                    description: salonData['products'][1]['description'],
+                    price: salonData['products'][1]['price'],
+                    imageUrl: salonData['products'][1]['imageUrl']),
+                ProductItem(
+                    productID: salonData['products'][2]["productID"],
+                    title: salonData['products'][2]['title'],
+                    description: salonData['products'][2]['description'],
+                    price: salonData['products'][2]['price'],
+                    imageUrl: salonData['products'][2]['imageUrl']),
+              ],
+              barbers: [
+                Barbers(
+                    barberID: salonData['barbers'][1]['barberID'],
+                    name: salonData['barbers'][1]['barberName'],
+                    career: salonData['barbers'][1]['career'],
+                    imageURL: salonData['barbers'][1]['imageUrl'],
+                    nationality: salonData['barbers'][1]['nationality']),
+                Barbers(
+                    barberID: salonData['barbers'][2]['barberID'],
+                    name: salonData['barbers'][2]['barberName'],
+                    career: salonData['barbers'][2]['career'],
+                    imageURL: salonData['barbers'][2]['imageUrl'],
+                    nationality: salonData['barbers'][2]['nationality'])
+              ],
+              services: [
+                Services(
+                  title: salonData['services'][1]['title'],
+                  descrption: salonData['services'][1]['descrption'],
+                  imageURL: salonData['services'][1]['imageURL'],
+                  price: salonData['services'][1]['price'],
+                  serviceID: salonData['services'][1]['serviceID'],
+                ),
+                Services(
+                    title: salonData['services'][2]['title'],
+                    descrption: salonData['services'][2]['descrption'],
+                    imageURL: salonData['services'][2]['imageURL'],
+                    price: salonData['services'][2]['price'],
+                    serviceID: salonData['services'][2]['serviceID'])
+              ]),
+        );
       });
       _items = loadedSalon;
       notifyListeners();
