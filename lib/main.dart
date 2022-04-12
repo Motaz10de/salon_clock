@@ -43,7 +43,7 @@ class MyApp extends StatelessWidget {
           title: 'SalonOclock',
           theme:
               ThemeData(primarySwatch: Colors.grey, accentColor: Colors.black),
-          home: auth.isAuth ? SalonOverviewScreen() : Start_screen(),
+          home: auth.isAuth ? SalonOverviewScreen() : auth_screen(),
           routes: {
             SalonDetailScreen.routeName: (ctx) => SalonDetailScreen(),
             TapScreen.routeName: (ctx) => TapScreen(),
