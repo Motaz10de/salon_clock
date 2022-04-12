@@ -6,6 +6,7 @@ import 'package:salon_clock/Screens/edit_salons.dart';
 import 'package:salon_clock/Screens/orders_screen.dart';
 import 'package:salon_clock/Screens/salonOverviewScreen.dart';
 import 'package:salon_clock/Screens/salon_detail_screen.dart';
+import 'package:salon_clock/Screens/start_screen.dart';
 import 'package:salon_clock/Screens/tap_screen.dart';
 import 'package:salon_clock/Screens/user_salons_screen.dart';
 import 'package:salon_clock/providers/auth.dart';
@@ -42,7 +43,7 @@ class MyApp extends StatelessWidget {
           title: 'SalonOclock',
           theme:
               ThemeData(primarySwatch: Colors.grey, accentColor: Colors.black),
-          home: auth.isAuth ? SalonOverviewScreen() : auth_screen(),
+          home: auth.isAuth ? SalonOverviewScreen() : Start_screen(),
           routes: {
             SalonDetailScreen.routeName: (ctx) => SalonDetailScreen(),
             TapScreen.routeName: (ctx) => TapScreen(),

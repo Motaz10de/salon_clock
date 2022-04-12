@@ -53,6 +53,7 @@ class _CartScreenState extends State<CartScreen> {
       setState(() {
         _timeOfDay = pickedTime;
         timeToString = pickedTime.toString();
+        print(_timeOfDay);
       });
     });
   }
